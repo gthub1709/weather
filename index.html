@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather Icons</title>
+  <style>
+    /* ====== СТИЛИ И АНИМАЦИИ ====== */
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 0;
+    }
+
+    .weather {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .weather--sun    { background: linear-gradient(45deg, #628aa4, #77a1b8); }
+    .weather--thunder{ background: linear-gradient(45deg, #172a44, #1f3654); }
+    .weather--snow   { background: linear-gradient(45deg, #5e6270, #82889c); }
+    .weather--rainbow{ background: linear-gradient(45deg, #1d5476, #296b8f); }
+
+    .icon {
+      position: relative;
+      width: 18rem;
+      height: 13rem;
+      transform: scale(0.8);
+    }
+
+    .icon__sun {
+      position: absolute;
+      top: 1rem;
+      right: 3.5rem;
+      height: 5rem;
+      width: 5rem;
+      background: linear-gradient(45deg, #f09559 40%, #f0ca43);
+      border-radius: 50%;
+    }
+
+    .icon__sun-lights {
+      position: absolute;
+      inset: 0;
+      animation: rotation 6s linear infinite;
+    }
+
+    .icon__sun-light {
+      position: absolute;
+      top: -2.75rem;
+      left: 50%;
+      margin-left: -0.45rem;
+      border-radius: 1rem;
+      width: 0.9rem;
+      height: 2.5rem;
+      background: linear-gradient(45deg, #f0b343, #f0ca43);
+      transform-origin: 50% 5.25rem;
+    }
+
+    .icon__sun-light:nth-child(1) { transform: rotate(0deg); }
+    .icon__sun-light:nth-child(2) { transform: rotate(45deg); }
+    .icon__sun-light:nth-child(3) { transform: rotate(90deg); }
+    .icon__sun-light:nth-child(4) { transform: rotate(135deg); }
+    .icon__sun-light:nth-child(5) { transform: rotate(180deg); }
+    .icon__sun-light:nth-child(6) { transform: rotate(225deg); }
+    .icon__sun-light:nth-child(7) { transform: rotate(270deg); }
+    .icon__sun-light:nth-child(8) { transform: rotate(315deg); }
+
+    .icon__cloud {
+      position: absolute;
+      left: 0;
+      top: 1rem;
+      width: 18rem;
+      height: 12rem;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      clip-path: url(#cloud-path);
+      box-shadow: inset 0 -1.3rem 0.25rem -1rem #fff, inset 0 0 5rem 0 #ffffff4d;
+    }
+
+    .weather--snow .icon__cloud    { background: rgba(100,130,197,0.45); }
+    .weather--thunder .icon__cloud { background: rgba(116,116,116,0.45); }
+    .weather--rainbow .icon__cloud { background: #4a6676; }
+
+    .icon__cloud-reflect {
+      height: 12rem;
+      width: 11.9rem;
+      border-radius: 50%;
+      clip-path: polygon(0 0, 100% 0%, 100% 33%, 50% 30%, 50% 100%, 0% 100%);
+    }
+
+    .icon__cloud-reflect--2 {
+      position: absolute;
+      width: 8.7rem;
+      height: 8.7rem;
+      bottom: 0.1rem;
+      right: 0.5rem;
+      clip-path: polygon(0 0, 100% 0%, 100% 100%, 50% 100%, 29% 0%);
+    }
+
+    .icon__cloud-shadow {
+      position: absolute;
+      left: 30rem;
+      top: -30rem;
+      width: 18rem;
+      height: 9rem;
+      border-radius: 50%;
+      box-shadow: -36rem 38rem 7rem #00000054;
+      z-index: -1;
+    }
+
+    .icon__rain-drops,
+    .icon__snow-flakes {
+      position: absolute;
+      top: 0;
+      left: 13rem;
+      animation: snow 3s linear infinite;
+      transform: translateY(-12rem) rotate(45deg);
+      opacity: 0.5;
+    }
+
+    .icon__rain-drops {
+      width: 0.6rem;
+      height: 0.6rem;
+      background: #7a98e9;
+      animation-delay: 1s;
+      border-radius: 0 1rem 1rem;
+    }
+
+    .icon__snow-flakes {
+      width: 0.8rem;
+      height: 0.8rem;
+      background: #fff;
+    }
+
+    .icon__thunder {
+      position: absolute;
+      top: 10rem;
+      left: 50%;
+      margin-left: -2.4rem;
+      width: 4.8rem;
+      height: 8.6rem;
+      animation: thunder 3s infinite, floating 3s infinite;
+    }
+
+    .icon__thunder::before,
+    .icon__thunder::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #645d95;
+      height: 5rem;
+      width: 3rem;
+      border-radius: 0.4rem;
+      clip-path: polygon(100% 100%, 0% 100%, 100% 0);
+    }
+
+    .icon__thunder::after {
+      top: auto;
+      bottom: 0;
+      left: auto;
+      right: 0;
+      clip-path: polygon(0% 100%, 100% 0%, 45% 0%, 0% 26%);
+    }
+
+    .icon__rainbow {
+      position: absolute;
+      right: 0;
+      top: -2rem;
+      height: 14rem;
+      width: 14rem;
+      animation: pulse 4s infinite;
+    }
+
+    .icon__rainbow-arc {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow: inset 2.5rem 2rem 0.3rem -3rem #000000bf,
+                  inset 0 0 0.3rem 0.25rem #ffffffb8,
+                  inset 0 0 0.2rem 0.4rem #000000a6,
+                  inset 0 0 0 0.6rem;
+      animation: neon 4s infinite;
+    }
+
+    .icon__rainbow-arc:nth-child(1) { color: #ff1f5d; }
+    .icon__rainbow-arc:nth-child(2) { color: #eb8125; inset: 0.9rem; animation-delay: 0.2s; }
+    .icon__rainbow-arc:nth-child(3) { color: #fbff0e; inset: 1.8rem; animation-delay: 0.4s; }
+    .icon__rainbow-arc:nth-child(4) { color: #a8ef3c; inset: 2.7rem; animation-delay: 0.6s; }
+    .icon__rainbow-arc:nth-child(5) { color: #59d9ff; inset: 3.6rem; animation-delay: 0.8s; }
+    .icon__rainbow-arc:nth-child(6) { color: #6685f5; inset: 4.5rem; animation-delay: 1s; }
+    .icon__rainbow-arc:nth-child(7) { color: #6a38e1; inset: 5.4rem; animation-delay: 1.2s; }
+
+    @keyframes rotation { 100% { transform: rotate(1turn); } }
+    @keyframes snow {
+      0%   { transform: translateY(-12rem) rotate(45deg); }
+      50%,100% { transform: translateY(12rem) rotate(45deg); }
+    }
+    @keyframes thunder {
+      0%,25%,75%,100% { filter: drop-shadow(0 0 0px #9a88ff); }
+      50% { filter: drop-shadow(0 0 24px #9a88ff); }
+    }
+    @keyframes floating {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-0.5rem); }
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.05); }
+    }
+    @keyframes neon {
+      0%,100% { box-shadow: inset 2.5rem 2rem 0.3rem -3rem #000000bf, inset 0 0 0.3rem 0.25rem #ffffffb8, inset 0 0 0.2rem 0.4rem #000000a6, inset 0 0 0 0.6rem; }
+      50%     { box-shadow: inset 2.5rem 2rem 0.3rem -3rem #000000bf, inset 0 0 0.6rem 0.3rem #ffffff, inset 0 0 0.2rem 0.5rem #000000a6, inset 0 0 0 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Солнце -->
+  <div class="weather weather--sun">
+    <div class="icon">
+      <div class="icon__sun">
+        <div class="icon__sun-lights">
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+          <div class="icon__sun-light"></div>
+        </div>
+      </div>
+      <div class="icon__cloud"></div>
+    </div>
+  </div>
+
+  <!-- Гроза -->
+  <div class="weather weather--thunder">
+    <div class="icon">
+      <div class="icon__cloud"></div>
+      <div class="icon__thunder"></div>
+    </div>
+  </div>
+
+  <!-- Снег -->
+  <div class="weather weather--snow">
+    <div class="icon">
+      <div class="icon__cloud"></div>
+      <div class="icon__snow">
+        <div class="icon__snow-flakes"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Радуга -->
+  <div class="weather weather--rainbow">
+    <div class="icon">
+      <div class="icon__cloud"></div>
+      <div class="icon__rainbow">
+        <div class="icon__rainbow-arc"></div>
+        <div class="icon__rainbow-arc"></div>
+        <div class="icon__rainbow-arc"></div>
+        <div class="icon__rainbow-arc"></div>
+        <div class="icon__rainbow-arc"></div>
+        <div class="icon__rainbow-arc"></div>
+        <div class="icon__rainbow-arc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG clip-path -->
+  <svg class="icon__cloud-svg">
+    <clipPath id="cloud-path" clipPathUnits="objectBoundingBox">
+      <path d="M0.042,0.704 C-0.007,0.469,0.2,0.309,0.288,0.288 C0.364,0.078,0.504,0.006,0.629,0.01 C0.771,-0.005,0.889,0.102,0.919,0.247 C1.055,0.282,1.063,0.49,0.957,0.572 C0.957,0.572,0.882,0.643,0.833,0.65 C0.826,0.764,0.684,0.851,0.53,0.847 C0.505,0.849,0.485,0.85,0.466,0.85 C0.364,0.856,0.25,0.859,0.154,0.816 C0.098,0.791,0.051,0.747,0.042,0.704"></path>
+    </clipPath>
+  </svg>
+</body>
+</html>
